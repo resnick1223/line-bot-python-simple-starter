@@ -1,14 +1,13 @@
 # 引入flask模組
-# 使用此模組必須在專案目錄的requirements.txt內加入 flask
 from flask import Flask, request, abort
 # 引入linebot相關模組
-# 使用此模組必須在專案目錄的requirements.txt內加入 line-bot-sdk
 from linebot import (
     LineBotApi, WebhookHandler
 )
 from linebot.exceptions import (
     InvalidSignatureError
 )
+
 # MessageEvent: 收到訊息的處理器
 # TextMessage: 接收使用者文字訊息的處理器
 # StickerMessage: 接收使用者貼圖訊息的處理器
@@ -30,6 +29,9 @@ print("[程式開始運行]")
 # 登入選擇Messaging API建立後即可取得channel secret與access token
 CHANNEL_ACCESS_TOKEN = '請將此字串置換成你的 CHANNEL_ACCESS_TOKEN'
 CHANNEL_SECRET = '請將此字串置換成你的 CHANNEL_SECRET'
+
+
+# ================== 以下為 X-LINE-SIGNATURE 驗證程序 ==================
 
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
@@ -65,7 +67,10 @@ def callback():
 
     return 'OK'
 
+# ================== 以上為 X-LINE-SIGNATURE 驗證程序 ==================
 
+
+# ========== 文字訊息傳入時的處理器 ==========
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     # 當有文字訊息傳入時
@@ -82,15 +87,21 @@ def handle_message(event):
         reply)
 
 
+# ========== 貼圖訊息傳入時的處理器 ==========
 @handler.add(MessageEvent, message=StickerMessage)
 def handle_sticker_message(event):
     # 當有貼圖訊息傳入時
     print('[使用者傳入貼圖訊息]')
     print(str(event))
+
+    # 準備要回傳的貼圖訊息
     # HINT: 機器人可用的貼圖 https://devdocs.line.me/files/sticker_list.pdf
+    reply = StickerSendMessage(package_id='2', sticker_id='149')
+
+    # 回傳訊息
     line_bot_api.reply_message(
         event.reply_token,
-        StickerSendMessage(package_id='2', sticker_id='149'))
+        reply)
 
 
 import os
