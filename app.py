@@ -79,7 +79,7 @@ def handle_message(event):
     print(str(event))
     # 準備要回傳的訊息
     # HINT: TextSendMessage(text="機器人要回傳給使用者的訊息")
-    reply = TextSendMessage(text='你剛才說的是' + event.message.text)
+    reply = TextSendMessage(text='Hello!')
 
     # 回傳訊息
     line_bot_api.reply_message(
